@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "opensearch-memory": {
+      "command": "python",
+      "args": ["-m", "opensearch_memory_mcp"]
+    }
+  }
+}

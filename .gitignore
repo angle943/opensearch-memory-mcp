@@ -1,0 +1,13 @@
+# User's config with credentials — never push this
+config.json
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+*.egg-info/
+dist/
+build/
+
+# Docker
+opensearch-data/

@@ -1,0 +1,9 @@
+{
+  "opensearch_url": "http://localhost:9200",
+  "opensearch_user": "",
+  "opensearch_password": "",
+  "opensearch_verify_certs": false,
+  "opensearch_model_id": "",
+  "embedding_dimension": 768,
+  "index_prefix": "memory"
+}

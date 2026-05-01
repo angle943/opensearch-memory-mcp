@@ -1,0 +1,18 @@
+services:
+  opensearch:
+    image: opensearchproject/opensearch:2.19.0
+    environment:
+      - discovery.type=single-node
+      - DISABLE_SECURITY_PLUGIN=true
+      - OPENSEARCH_INITIAL_ADMIN_PASSWORD=MyStr0ngP@ss!
+    ports:
+      - "9200:9200"
+    volumes:
+      - opensearch-data:/usr/share/opensearch/data
+    healthcheck:
+      test: ["CMD-SHELL", "curl -s http://localhost:9200/_cluster/health | grep -q '\"status\"'"]
+      interval: 10s
+      retries: 10
+
+volumes:
+  opensearch-data:
