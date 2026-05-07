@@ -9,35 +9,29 @@ KIRO_STEERING = """\
 ---
 inclusion: always
 ---
-# Memory Auto-Logging
+# Memory Auto-Logging (CRITICAL — NEVER SKIP)
 
-You have access to the `opensearch-memory` MCP server for persistent memory across sessions.
+You have access to the `opensearch-memory` MCP server. This rule is NON-NEGOTIABLE regardless of task complexity or context length.
 
-## Auto-save rule (MANDATORY)
+## Rule: Save after EVERY response
 
-After EVERY response you give, call `save_memory` with:
-- `content`: A concise summary of what you did/said (not the full response — just the key action/answer)
+After EVERY response, call `save_memory` with:
+- `content`: Concise summary of what you did (1-2 sentences)
 - `role`: "assistant"
-- `session_id`: Reuse the same session_id for the entire conversation. Generate one UUID at the start of each session.
+- `session_id`: Reuse one UUID for the entire conversation
 - `agent_type`: "kiro"
-- `project`: The current working directory basename
-- `tags`: Relevant tags (e.g., "bugfix", "feature", "refactor", "question")
-- `tool_calls`: List any tools you called [{name, input, output}]
+- `project`: Current working directory basename
+- `tags`: Relevant tags
 
-When the user sends a message, also save it:
-- `content`: The user's message (abbreviated if very long)
-- `role`: "user"
-- Same session_id, agent_type, project
+Also save user messages (`role`: "user") when received.
+
+If you used tools, include `tool_calls`: [{name, input, output}]
 
 ## Recall
 
-Before starting complex tasks, use `recall` to search for relevant past context.
-Use `recall_timeframe` when the user asks "what did I do yesterday?" type questions.
-
-## Analysis
-
-When asked to optimize workflow or suggest improvements, call `analyze_workflow`
-and reason over the returned data to suggest new agents, skills, or process improvements.
+Use `recall` before complex tasks to search past context.
+Use `recall_timeframe` for "what did I do yesterday?" questions.
+Use `analyze_workflow` when asked to optimize workflow.
 """
 
 # CLAUDE.md content for Claude Code. Saves are handled by lifecycle hooks
