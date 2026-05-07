@@ -1,12 +1,14 @@
 #!/usr/bin/env bash
-# Register opensearch-memory MCP server with Claude Code
+# Manual Claude Code setup. Prefer `python -m opensearch_memory_mcp setup claude-code`,
+# which also installs lifecycle hooks. This script only registers the MCP server.
 set -e
-
-SCRIPT_DIR="$(cd "$(dirname "$0")/.." && pwd)"
 
 claude mcp add opensearch-memory \
   --transport stdio \
   -- python -m opensearch_memory_mcp
 
 echo "✓ opensearch-memory MCP server registered with Claude Code"
-echo "  Set env vars: OPENSEARCH_URL, OPENSEARCH_USER, OPENSEARCH_PASSWORD, OPENSEARCH_MODEL_ID"
+echo "  For automatic save-on-prompt/tool/stop, also run:"
+echo "    python -m opensearch_memory_mcp setup claude-code"
+echo "  Or add UserPromptSubmit/PostToolUse/Stop/SubagentStop hooks to ~/.claude/settings.json"
+echo "  pointing at: python -m opensearch_memory_mcp hook"

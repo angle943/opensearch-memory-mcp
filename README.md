@@ -62,7 +62,29 @@ python -m opensearch_memory_mcp setup kiro
 python -m opensearch_memory_mcp setup claude-code
 ```
 
+This:
+1. Registers the `opensearch-memory` MCP server with Claude Code.
+2. Installs **lifecycle hooks** in `~/.claude/settings.json` so user prompts, tool calls, and assistant replies are saved automatically — no model cooperation required. Hooks run for `UserPromptSubmit`, `PostToolUse` (all tools), `Stop`, and `SubagentStop`.
+3. Writes recall/analyze guidance to `CLAUDE.md` in the current directory.
+
+Hook failures never block Claude — if OpenSearch is unreachable, the hook logs to stderr and exits 0.
+
 The server auto-creates `~/.opensearch-memory/config.json` with defaults pointing to `http://localhost:9200` (no auth). Edit this file if you need to point to a different cluster.
+
+### Manual Claude Code hook wiring
+
+If `setup claude-code` can't write `~/.claude/settings.json` (permissions, custom paths), add this block by hand:
+
+```json
+{
+  "hooks": {
+    "UserPromptSubmit": [{"hooks": [{"type": "command", "command": "/abs/path/to/python -m opensearch_memory_mcp hook"}]}],
+    "PostToolUse":      [{"matcher": ".*", "hooks": [{"type": "command", "command": "/abs/path/to/python -m opensearch_memory_mcp hook"}]}],
+    "Stop":             [{"hooks": [{"type": "command", "command": "/abs/path/to/python -m opensearch_memory_mcp hook"}]}],
+    "SubagentStop":     [{"hooks": [{"type": "command", "command": "/abs/path/to/python -m opensearch_memory_mcp hook"}]}]
+  }
+}
+```
 
 ## Configuration Reference
 

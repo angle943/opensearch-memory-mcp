@@ -1,18 +1,23 @@
 #!/usr/bin/env bash
-# Claude Code PostToolUse hook — auto-saves tool interactions to memory
-# Install: copy to .claude/hooks/PostToolUse.sh or configure in settings
+# Claude Code lifecycle hook driver — auto-saves prompts, tool calls, and
+# assistant replies to OpenSearch.
 #
-# This hook is called after every tool use. It sends a save_memory call
-# to capture the tool interaction automatically.
+# `python -m opensearch_memory_mcp setup claude-code` installs this for you
+# by registering `python -m opensearch_memory_mcp hook` directly in
+# ~/.claude/settings.json. This script is provided as a convenience for
+# users who want to wire the hook in by hand.
+#
+# Wire in by adding to ~/.claude/settings.json:
+#   {
+#     "hooks": {
+#       "UserPromptSubmit": [{"hooks": [{"type": "command", "command": "/abs/path/to/this/script"}]}],
+#       "PostToolUse":      [{"matcher": ".*", "hooks": [{"type": "command", "command": "/abs/path/to/this/script"}]}],
+#       "Stop":             [{"hooks": [{"type": "command", "command": "/abs/path/to/this/script"}]}],
+#       "SubagentStop":     [{"hooks": [{"type": "command", "command": "/abs/path/to/this/script"}]}]
+#     }
+#   }
+#
+# Claude passes the hook payload as JSON on stdin; we forward it as-is.
+# Errors are swallowed by the Python driver so a broken cluster never blocks Claude.
 
-# The hook receives tool info via environment variables from Claude Code:
-# TOOL_NAME, TOOL_INPUT, TOOL_OUTPUT, SESSION_ID
-
-if [ -z "$TOOL_NAME" ] || [ "$TOOL_NAME" = "save_memory" ]; then
-  exit 0  # Don't recursively save save_memory calls
-fi
-
-# Use the MCP server's save_memory tool via Claude Code's internal mechanism
-# This is a placeholder — actual hook integration depends on Claude Code's
-# hook API which passes tool context automatically.
-echo "Memory hook: captured $TOOL_NAME" >&2
+exec python3 -m opensearch_memory_mcp hook

@@ -51,8 +51,7 @@ def ping() -> str:
 # Tool: save_memory
 # ---------------------------------------------------------------------------
 
-@mcp.tool()
-def save_memory(
+def save_memory_impl(
     content: str,
     role: str = "assistant",
     session_id: str = "",
@@ -61,17 +60,7 @@ def save_memory(
     tags: list[str] | None = None,
     tool_calls: list[dict] | None = None,
 ) -> str:
-    """Save a conversation turn to persistent memory.
-
-    Args:
-        content: The interaction text (user message or agent response).
-        role: 'user' or 'assistant'.
-        session_id: Session identifier. Auto-generated if empty.
-        agent_type: Agent name (e.g. 'kiro', 'claude-code').
-        project: Project/workspace context.
-        tags: Optional tags for categorization.
-        tool_calls: Optional list of tool calls [{name, input, output}].
-    """
+    """Plain Python implementation of save_memory; usable from hooks/tests."""
     client = get_client()
     if not session_id:
         session_id = str(uuid.uuid4())
@@ -119,6 +108,38 @@ def save_memory(
     )
 
     return json.dumps({"status": "saved", "id": resp["_id"], "session_id": session_id})
+
+
+@mcp.tool()
+def save_memory(
+    content: str,
+    role: str = "assistant",
+    session_id: str = "",
+    agent_type: str = "unknown",
+    project: str = "",
+    tags: list[str] | None = None,
+    tool_calls: list[dict] | None = None,
+) -> str:
+    """Save a conversation turn to persistent memory.
+
+    Args:
+        content: The interaction text (user message or agent response).
+        role: 'user' or 'assistant'.
+        session_id: Session identifier. Auto-generated if empty.
+        agent_type: Agent name (e.g. 'kiro', 'claude-code').
+        project: Project/workspace context.
+        tags: Optional tags for categorization.
+        tool_calls: Optional list of tool calls [{name, input, output}].
+    """
+    return save_memory_impl(
+        content=content,
+        role=role,
+        session_id=session_id,
+        agent_type=agent_type,
+        project=project,
+        tags=tags,
+        tool_calls=tool_calls,
+    )
 
 
 # ---------------------------------------------------------------------------
